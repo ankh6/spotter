@@ -1,6 +1,6 @@
 from constants import KUCOIN_API_BASE_URL, KUCOIN_API_VERSION, SUPPORTED_STABLECOINS
-from interfaces.MarketRetriever import MarketRetriever
 from interfaces.Exchange import Exchange
+from interfaces.MarketRetriever import MarketRetriever
 from requests import get
 from typing import List, Tuple
 from utils import MarketRetrieverUtils
@@ -63,7 +63,14 @@ class KuCoinMarketRetriever(MarketRetriever):
             highest_bid = float(data["bestBid"])
             lowest_ask = float(data["bestAsk"])
             print(f"KuCoin - Computing spread percentage for symbol {trading_pair}. . .")
-            spread_percentage = MarketRetrieverUtils.compute_spread_percentage(highest_bid, lowest_ask)
-            res = [data["time"], highest_bid, lowest_ask, spread_percentage]
-            trading_attributes[trading_pair] = res
+            try:
+                spread_percentage: float = MarketRetrieverUtils.compute_spread_percentage(highest_bid, lowest_ask)
+                res = [data["time"], highest_bid, lowest_ask, spread_percentage]
+                trading_attributes[trading_pair] = res
+            except ZeroDivisionError as e:
+                print(f"There is no demand for the pair {trading_pair}. Reasons might be that either bid or ask are 0")
+                trading_attributes[trading_pair] = [data["time"], highest_bid, lowest_ask, spread_percentage]
+            except Exception:
+                print(Exception.args)
+                raise Exception
         return trading_attributes
