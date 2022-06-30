@@ -1,4 +1,3 @@
-import re
 from constants import BINANCE_API_BASE_URL, BINANCE_API_VERSION, SUPPORTED_STABLECOINS
 from interfaces.MarketRetriever import MarketRetriever
 from interfaces.Exchange import Exchange
