@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 from services import reporter
 
 def standardize_trading_pair(input: str):
-    tmp_input = input.split("-")
+    tmp_input: List[str] = input.split("-")
     return tmp_input[0] + tmp_input[1]
 
 def find_union(left_container: List[str], right_container: List[str], amount: int=20) -> List:
