@@ -1,7 +1,11 @@
+import re
 from constants import BINANCE_API_BASE_URL, BINANCE_API_VERSION, SUPPORTED_STABLECOINS
 from interfaces.MarketRetriever import MarketRetriever
+from interfaces.Exchange import Exchange
 from requests import get
+from time import time
 from typing import List, Tuple
+from utils import MarketRetrieverUtils
 
 class BinanceMarketRetriever(MarketRetriever):
     ''' Concrete class that implements methods from Abstract class MarketRetriever
@@ -9,6 +13,7 @@ class BinanceMarketRetriever(MarketRetriever):
 
     def __init__(self):
         self._trading_pairs: List[str] = None
+        self.exchange_name: Exchange = Exchange.BINANCE
     
     
     def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
@@ -52,5 +57,22 @@ class BinanceMarketRetriever(MarketRetriever):
             print(e.args)
             raise e
     
-    def fetch_tickers(self):
-        pass
+    def fetch_tickers(self, trading_pairs: List[str]):
+        ''' Wrapper function that encapsulates the logic of interacting with KuCoin's API to retrieve
+        the tickers of the trading pairs that are passed as an argument
+
+        Arguments:
+        trading_pairs, a list of trading pairs in the format base_asset - quote_asset
+        '''
+        trading_attributes = dict()
+        for trading_pair in trading_pairs:
+            print("Before standard: ", trading_pair)
+            _trading_pair = MarketRetrieverUtils.standardize_trading_pair(trading_pair)
+            print("After standard: ", _trading_pair)
+            response = self.fetch_resources(url=BINANCE_API_BASE_URL, version=BINANCE_API_VERSION, endpoint="ticker/bookTicker", params=[("symbol", _trading_pair)])
+            highest_bid = float(response["bidPrice"])
+            lowest_ask = float(response["askPrice"])
+            print(f"Binance - Computing spread percentage for symbol {_trading_pair}. . .")
+            spread_percentage = MarketRetrieverUtils.compute_spread_percentage(highest_bid, lowest_ask)
+            trading_attributes[_trading_pair] = [time(), highest_bid, lowest_ask, spread_percentage]
+        return trading_attributes
