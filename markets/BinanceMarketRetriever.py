@@ -14,7 +14,7 @@ class BinanceMarketRetriever(MarketRetriever):
         self._trading_pairs: List[str] = None
         self.exchange_name: Exchange = Exchange.BINANCE
     
-    def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
+    async def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
         ''' Implementation of abstract function fetch_resources
 
         Arguments:
@@ -38,12 +38,12 @@ class BinanceMarketRetriever(MarketRetriever):
         '''
         return self._trading_pairs
     
-    def fetch_trading_pairs(self):
+    async def fetch_trading_pairs(self):
         ''' Wrapper function that encapsulates the logic of interacting with Binance's API to retrieve the trading pairs
         that have a supported stablecoin (BUSDC, USDC, USDT) as a quote asset
         '''
         try:
-            response = self.fetch_resources(url=BINANCE_API_BASE_URL, version=BINANCE_API_VERSION, endpoint="exchangeInfo")
+            response = await self.fetch_resources(url=BINANCE_API_BASE_URL, version=BINANCE_API_VERSION, endpoint="exchangeInfo")
             symbols = response["symbols"]
             symbol_container = list()
             for quote in symbols:
@@ -55,7 +55,7 @@ class BinanceMarketRetriever(MarketRetriever):
             print(e.args)
             raise e
     
-    def fetch_tickers(self, trading_pairs: List[str]):
+    async def fetch_tickers(self, trading_pairs: List[str]):
         ''' Wrapper function that encapsulates the logic of interacting with KuCoin's API to retrieve
         the tickers of the trading pairs that are passed as an argument
 
@@ -65,7 +65,7 @@ class BinanceMarketRetriever(MarketRetriever):
         trading_attributes = dict()
         for trading_pair in trading_pairs:
             _trading_pair = MarketRetrieverUtils.standardize_trading_pair(trading_pair)
-            response = self.fetch_resources(url=BINANCE_API_BASE_URL, version=BINANCE_API_VERSION, endpoint="ticker/bookTicker", params=[("symbol", _trading_pair)])
+            response = await self.fetch_resources(url=BINANCE_API_BASE_URL, version=BINANCE_API_VERSION, endpoint="ticker/bookTicker", params=[("symbol", _trading_pair)])
             highest_bid = float(response["bidPrice"])
             lowest_ask = float(response["askPrice"])
             print(f"Binance - Computing spread percentage for symbol {_trading_pair}. . .")

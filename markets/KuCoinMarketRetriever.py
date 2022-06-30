@@ -11,7 +11,7 @@ class KuCoinMarketRetriever(MarketRetriever):
         self.exchange_name: Exchange = Exchange.KUCOIN
         self._trading_pairs: List[str] = None
     
-    def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
+    async def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
         ''' Implementation of abstract function fetch_resources
 
         Arguments:
@@ -33,12 +33,12 @@ class KuCoinMarketRetriever(MarketRetriever):
         '''
         return self._trading_pairs
         
-    def fetch_trading_pairs(self):
+    async def fetch_trading_pairs(self):
         ''' Wrapper function that encapsulates the logic of interacting with KuCoin's API to retrieve the trading pairs
         that have a supported stablecoin (BUSDC, USDC, USDT) as a quote asset
         '''
         try:
-            response = self.fetch_resources(url=KUCOIN_API_BASE_URL, version=KUCOIN_API_VERSION, endpoint="symbols")
+            response = await self.fetch_resources(url=KUCOIN_API_BASE_URL, version=KUCOIN_API_VERSION, endpoint="symbols")
             data: List = response["data"]
             symbol_container = list()
             for single_data in data:
@@ -49,7 +49,7 @@ class KuCoinMarketRetriever(MarketRetriever):
             print(e.args)
             print(e)
     
-    def fetch_tickers(self, trading_pairs: List[str]):
+    async def fetch_tickers(self, trading_pairs: List[str]):
         ''' Wrapper function that encapsulates the logic of interacting with KuCoin's API to retrieve
         the tickers of the trading pairs that are passed as an argument
 
@@ -58,7 +58,7 @@ class KuCoinMarketRetriever(MarketRetriever):
         '''
         trading_attributes = dict()
         for trading_pair in trading_pairs:
-            response = self.fetch_resources(url=KUCOIN_API_BASE_URL, version=KUCOIN_API_VERSION, endpoint="market/orderbook/level1", params=[("symbol", trading_pair)])
+            response = await self.fetch_resources(url=KUCOIN_API_BASE_URL, version=KUCOIN_API_VERSION, endpoint="market/orderbook/level1", params=[("symbol", trading_pair)])
             data: List = response["data"]
             highest_bid = float(data["bestBid"])
             lowest_ask = float(data["bestAsk"])
