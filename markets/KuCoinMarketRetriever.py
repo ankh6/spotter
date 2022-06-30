@@ -1,5 +1,6 @@
 from constants import KUCOIN_API_BASE_URL, KUCOIN_API_VERSION, SUPPORTED_STABLECOINS
 from interfaces.MarketRetriever import MarketRetriever
+from interfaces.Exchange import Exchange
 from requests import get
 from typing import List, Tuple
 from utils import MarketRetrieverUtils
@@ -7,8 +8,8 @@ from utils import MarketRetrieverUtils
 
 class KuCoinMarketRetriever(MarketRetriever):
     def __init__(self):
+        self.exchange_name: Exchange = Exchange.KUCOIN
         self._trading_pairs: List[str] = None
-    
     
     def fetch_resources(self, url: str, version: str, endpoint: str, params: List[Tuple[str,str]] = None):
         ''' Implementation of abstract function fetch_resources
@@ -61,7 +62,7 @@ class KuCoinMarketRetriever(MarketRetriever):
             data: List = response["data"]
             highest_bid = float(data["bestBid"])
             lowest_ask = float(data["bestAsk"])
-            print(f"Computing spread percentage for symbol {trading_pair}. . .")
+            print(f"KuCoin - Computing spread percentage for symbol {trading_pair}. . .")
             spread_percentage = MarketRetrieverUtils.compute_spread_percentage(highest_bid, lowest_ask)
             res = [data["time"], highest_bid, lowest_ask, spread_percentage]
             trading_attributes[trading_pair] = res
