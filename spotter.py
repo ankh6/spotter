@@ -65,10 +65,11 @@ async def execute_monitoring(exchanges: List[MarketRetriever], union_markets_set
     '''
     await monitor_spread_on_exchanges(exchanges=exchanges, trading_pairs=union_markets_set)
     while True:
-        print((f"Waiting for {SPOTTER_RUNNING_FREQUENCY} seconds before next run"))
+        print(f"Waiting for {SPOTTER_RUNNING_FREQUENCY} seconds before next run")
         await asyncio.sleep(SPOTTER_RUNNING_FREQUENCY)
         await execute_monitoring(exchanges=exchanges, union_markets_set=union_markets_set)
 
 if __name__ == '__main__':
+    # Run coroutines
     binance, kucoin, markets = asyncio.run(initialize())
     asyncio.run(execute_monitoring([binance, kucoin], markets))
