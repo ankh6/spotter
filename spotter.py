@@ -37,7 +37,7 @@ async def monitor_spread_on_exchanges(exchanges, trading_pairs: List[str]):
 
     Arguments:
     exchanges: the list of exchanges that have been initialized by initialize()
-    union_markets_set: the list of of markets that are on both Binance and KuCoin
+    trading_pairs: the list of of markets that are on both Binance and KuCoin
 
     '''
     for exchange in exchanges:
