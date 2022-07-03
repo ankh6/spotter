@@ -69,11 +69,6 @@ Please note that:
 The spotter runs every minute. I deliberatively chose an low timeframe to maximise the arbitrage opportunities by having lots of data points.
 
 
-Difficultie(s):
-- Different schemas depending on your data sources
-    - Format of trading pairs (i.e. with-/out dash)
-    - The fields of the response you get from the API
-
 ## What is next ?
 - Consume stream data with websockets
     - More efficient to open a websocket connect, subscribe to a topic for a specific timeframe
