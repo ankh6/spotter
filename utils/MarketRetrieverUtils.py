@@ -6,6 +6,10 @@ def standardize_trading_pair(input: str):
     tmp_input: List[str] = input.split("-")
     return tmp_input[0] + tmp_input[1]
 
+
+def standarize_trading_pairs_for_stream(list_of_trading_pairs: str):
+    return [trading_pair.lower() for trading_pair in list_of_trading_pairs]
+
 def find_union(left_container: List[str], right_container: List[str], amount: int=20) -> List:
     union_container = list()
     try:
@@ -27,7 +31,7 @@ def find_union(left_container: List[str], right_container: List[str], amount: in
         raise e
 
 def compute_spread_percentage(bid, ask):
-    return (abs(bid - ask) / ask) * 100
+    return (1 - (bid / ask)) * 100
 
 def generate_trading_report(trading_attributes: Dict[str,List[Union[int,str]]], exchange: Exchange):
     for trading_pair, values in trading_attributes.items():
