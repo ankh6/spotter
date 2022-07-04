@@ -1,3 +1,4 @@
+BINANCE_WEBSOCKET_BASE_URL: str = "wss://stream.binance.com:9443"
 BINANCE_API_BASE_URL: str = "https://api.binance.com/api"
 BINANCE_API_VERSION: str = "v3"
 KUCOIN_API_BASE_URL: str = "https://api.kucoin.com/api"
